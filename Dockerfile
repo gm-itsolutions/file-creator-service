@@ -25,4 +25,5 @@ RUN chmod -R 755 /app
 
 EXPOSE 8002
 
-CMD ["python", "src/server.py"]
+# Mit proxy_headers für Reverse-Proxy Support
+CMD ["python", "-m", "uvicorn", "src.server:app", "--host", "0.0.0.0", "--port", "8002", "--proxy-headers", "--forwarded-allow-ips", "*"]
