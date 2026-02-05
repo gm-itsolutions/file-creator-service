@@ -886,11 +886,21 @@ async def lifespan(app: FastAPI):
     # Shutdown
     task.cancel()
 
+# Bestimme Server URL für OpenAPI
+def get_openapi_servers():
+    """Gibt Server-Liste für OpenAPI zurück, basierend auf BASE_URL"""
+    if BASE_URL and BASE_URL != f"http://localhost:{PORT}":
+        return [{"url": BASE_URL, "description": "File Creator Server"}]
+    # Kein expliziter Server = relative URLs (funktioniert mit Proxy)
+    return None
+
 app = FastAPI(
     title="File Creator Service - Extended",
     description="Erstellt professionelle PPTX, DOCX, XLSX und PDF Dateien mit Design-Optionen, Templates und Logo-Support",
     version="2.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    servers=get_openapi_servers(),
+    root_path=os.getenv("ROOT_PATH", "")  # Für Reverse-Proxy mit Pfad-Prefix
 )
 
 app.add_middleware(
@@ -1105,4 +1115,10 @@ async def delete_file(filename: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=PORT)
+    uvicorn.run(
+        app, 
+        host="0.0.0.0", 
+        port=PORT,
+        proxy_headers=True,
+        forwarded_allow_ips="*"
+    )
