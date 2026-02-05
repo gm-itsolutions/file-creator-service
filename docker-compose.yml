@@ -1,0 +1,40 @@
+# File Creator Service - Docker Compose für Coolify
+# ==================================================
+#
+# Erstellt Office-Dateien (PPTX, DOCX, XLSX) und gibt Download-Links zurück.
+#
+# Deployment:
+# 1. Repository zu Coolify hinzufügen
+# 2. Build Pack: Docker Compose
+# 3. Environment Variable setzen: BASE_URL=https://files.deine-domain.de
+# 4. Domain zuweisen (Port 8002)
+# 5. Deploy!
+
+version: "3.8"
+
+services:
+  file-creator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - FILES_DIR=/app/files
+      - PORT=8002
+      - HOST=0.0.0.0
+      - BASE_URL=${BASE_URL:-http://localhost:8002}
+      - FILE_RETENTION_HOURS=24
+    volumes:
+      # Persistente Dateien
+      - files-data:/app/files
+    ports:
+      - "8002:8002"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  files-data:

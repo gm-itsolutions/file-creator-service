@@ -1,0 +1,10 @@
+# File Creator Service Dependencies
+
+# HTTP Server
+uvicorn>=0.27.0
+starlette>=0.36.0
+
+# Office-Dateien erstellen
+python-pptx>=0.6.21
+python-docx>=1.1.0
+openpyxl>=3.1.0
