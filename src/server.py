@@ -889,9 +889,10 @@ async def lifespan(app: FastAPI):
 # Bestimme Server URL für OpenAPI
 def get_openapi_servers():
     """Gibt Server-Liste für OpenAPI zurück, basierend auf BASE_URL"""
-    if BASE_URL and BASE_URL != f"http://localhost:{PORT}":
+    # Wenn BASE_URL gesetzt und nicht localhost, verwende sie
+    if BASE_URL and "localhost" not in BASE_URL and "127.0.0.1" not in BASE_URL:
         return [{"url": BASE_URL, "description": "File Creator Server"}]
-    # Kein expliziter Server = relative URLs (funktioniert mit Proxy)
+    # None = Swagger nutzt relative URLs vom aktuellen Host
     return None
 
 app = FastAPI(
@@ -900,7 +901,7 @@ app = FastAPI(
     version="2.0.0",
     lifespan=lifespan,
     servers=get_openapi_servers(),
-    root_path=os.getenv("ROOT_PATH", "")  # Für Reverse-Proxy mit Pfad-Prefix
+    root_path=os.getenv("ROOT_PATH", "")
 )
 
 app.add_middleware(
@@ -933,6 +934,19 @@ async def root():
             "list_files": "/files",
             "color_palettes": "/palettes"
         }
+    }
+
+@app.get("/debug/config")
+async def debug_config():
+    """Debug-Endpoint um die aktuelle Konfiguration zu prüfen"""
+    return {
+        "BASE_URL": BASE_URL,
+        "PORT": PORT,
+        "ROOT_PATH": os.getenv("ROOT_PATH", ""),
+        "FILES_DIR": str(FILES_DIR),
+        "ASSETS_DIR": str(ASSETS_DIR),
+        "TEMPLATES_DIR": str(TEMPLATES_DIR),
+        "openapi_servers": get_openapi_servers()
     }
 
 # --- PowerPoint ---
