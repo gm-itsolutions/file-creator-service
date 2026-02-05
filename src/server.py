@@ -486,7 +486,7 @@ async def openapi_schema(request):
                                                 "properties": {
                                                     "name": {"type": "string", "description": "Name des Arbeitsblatts"},
                                                     "headers": {"type": "array", "items": {"type": "string"}, "description": "Spaltenüberschriften"},
-                                                    "rows": {"type": "array", "items": {"type": "array"}, "description": "Datenzeilen"}
+                                                    "rows": {"type": "array", "items": {"type": "array", "items": {"type": "string"}}, "description": "Datenzeilen"}
                                                 }
                                             }
                                         }
