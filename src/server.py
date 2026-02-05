@@ -21,12 +21,12 @@ from pydantic import BaseModel, Field
 # Document Libraries
 from pptx import Presentation
 from pptx.util import Inches, Pt
-from pptx.dml.color import RgbColor
+from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.enum.shapes import MSO_SHAPE
 
 from docx import Document
-from docx.shared import Inches as DocxInches, Pt as DocxPt, RGBColor
+from docx.shared import Inches as DocxInches, Pt as DocxPt, RGBColor as DocxRGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.style import WD_STYLE_TYPE
 
@@ -300,7 +300,7 @@ def create_professional_pptx(request: PresentationRequest) -> Path:
         MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height
     )
     background.fill.solid()
-    background.fill.fore_color.rgb = RgbColor(*hex_to_rgb(palette["primary"]))
+    background.fill.fore_color.rgb = RGBColor(*hex_to_rgb(palette["primary"]))
     background.line.fill.background()
     
     # Title
@@ -310,7 +310,7 @@ def create_professional_pptx(request: PresentationRequest) -> Path:
     title_para.text = request.title
     title_para.font.size = Pt(44)
     title_para.font.bold = True
-    title_para.font.color.rgb = RgbColor(*hex_to_rgb(palette["text_light"]))
+    title_para.font.color.rgb = RGBColor(*hex_to_rgb(palette["text_light"]))
     title_para.alignment = PP_ALIGN.LEFT
     
     # Subtitle
@@ -320,7 +320,7 @@ def create_professional_pptx(request: PresentationRequest) -> Path:
         subtitle_para = subtitle_frame.paragraphs[0]
         subtitle_para.text = request.subtitle
         subtitle_para.font.size = Pt(24)
-        subtitle_para.font.color.rgb = RgbColor(*hex_to_rgb(palette["secondary"]))
+        subtitle_para.font.color.rgb = RGBColor(*hex_to_rgb(palette["secondary"]))
         subtitle_para.alignment = PP_ALIGN.LEFT
     
     # Logo on title slide
@@ -334,7 +334,7 @@ def create_professional_pptx(request: PresentationRequest) -> Path:
         author_para = author_frame.paragraphs[0]
         author_para.text = f"{request.author} | {datetime.now().strftime('%B %Y')}"
         author_para.font.size = Pt(14)
-        author_para.font.color.rgb = RgbColor(*hex_to_rgb(palette["accent"]))
+        author_para.font.color.rgb = RGBColor(*hex_to_rgb(palette["accent"]))
     
     # --- Content Slides ---
     for slide_content in request.slides:
@@ -343,7 +343,7 @@ def create_professional_pptx(request: PresentationRequest) -> Path:
         # Light background for content slides
         bg = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height)
         bg.fill.solid()
-        bg.fill.fore_color.rgb = RgbColor(255, 255, 255)
+        bg.fill.fore_color.rgb = RGBColor(255, 255, 255)
         bg.line.fill.background()
         
         # Accent bar at top
@@ -351,7 +351,7 @@ def create_professional_pptx(request: PresentationRequest) -> Path:
             MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, Inches(0.1)
         )
         accent_bar.fill.solid()
-        accent_bar.fill.fore_color.rgb = RgbColor(*hex_to_rgb(palette["primary"]))
+        accent_bar.fill.fore_color.rgb = RGBColor(*hex_to_rgb(palette["primary"]))
         accent_bar.line.fill.background()
         
         # Slide title
@@ -361,7 +361,7 @@ def create_professional_pptx(request: PresentationRequest) -> Path:
         title_para.text = slide_content.title
         title_para.font.size = Pt(36)
         title_para.font.bold = True
-        title_para.font.color.rgb = RgbColor(*hex_to_rgb(palette["text_dark"]))
+        title_para.font.color.rgb = RGBColor(*hex_to_rgb(palette["text_dark"]))
         
         # Content based on layout
         if slide_content.layout == "title_content":
@@ -387,7 +387,7 @@ def create_professional_pptx(request: PresentationRequest) -> Path:
         
         bg = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height)
         bg.fill.solid()
-        bg.fill.fore_color.rgb = RgbColor(*hex_to_rgb(palette["primary"]))
+        bg.fill.fore_color.rgb = RGBColor(*hex_to_rgb(palette["primary"]))
         bg.line.fill.background()
         
         thanks_box = slide.shapes.add_textbox(Inches(0.75), Inches(3), Inches(11.8), Inches(1.5))
@@ -396,7 +396,7 @@ def create_professional_pptx(request: PresentationRequest) -> Path:
         thanks_para.text = "Vielen Dank!"
         thanks_para.font.size = Pt(54)
         thanks_para.font.bold = True
-        thanks_para.font.color.rgb = RgbColor(*hex_to_rgb(palette["text_light"]))
+        thanks_para.font.color.rgb = RGBColor(*hex_to_rgb(palette["text_light"]))
         thanks_para.alignment = PP_ALIGN.CENTER
         
         if logo_path:
@@ -419,7 +419,7 @@ def _add_standard_content(slide, content: SlideContent, palette: dict):
         para = tf.paragraphs[0]
         para.text = content.content
         para.font.size = Pt(18)
-        para.font.color.rgb = RgbColor(*hex_to_rgb(palette["text_dark"]))
+        para.font.color.rgb = RGBColor(*hex_to_rgb(palette["text_dark"]))
         para.space_after = Pt(12)
     
     if content.bullet_points:
@@ -434,12 +434,12 @@ def _add_standard_content(slide, content: SlideContent, palette: dict):
                 MSO_SHAPE.OVAL, Inches(0.75), bullet_y + Inches(i * 0.7) + Inches(0.1), Inches(0.25), Inches(0.25)
             )
             circle.fill.solid()
-            circle.fill.fore_color.rgb = RgbColor(*hex_to_rgb(palette["secondary"]))
+            circle.fill.fore_color.rgb = RGBColor(*hex_to_rgb(palette["secondary"]))
             circle.line.fill.background()
             
             para.text = f"    {point}"
             para.font.size = Pt(16)
-            para.font.color.rgb = RgbColor(*hex_to_rgb(palette["text_dark"]))
+            para.font.color.rgb = RGBColor(*hex_to_rgb(palette["text_dark"]))
 
 def _add_two_column_content(slide, content: SlideContent, palette: dict):
     """Zwei-Spalten Layout"""
@@ -463,12 +463,12 @@ def _fill_column(textbox, col_data: dict, palette: dict):
         para.text = col_data["title"]
         para.font.size = Pt(20)
         para.font.bold = True
-        para.font.color.rgb = RgbColor(*hex_to_rgb(palette["primary"]))
+        para.font.color.rgb = RGBColor(*hex_to_rgb(palette["primary"]))
     if col_data.get("content"):
         para = tf.add_paragraph()
         para.text = col_data["content"]
         para.font.size = Pt(14)
-        para.font.color.rgb = RgbColor(*hex_to_rgb(palette["text_dark"]))
+        para.font.color.rgb = RGBColor(*hex_to_rgb(palette["text_dark"]))
 
 def _add_stats_content(slide, content: SlideContent, palette: dict):
     """Stats Layout: Große Zahlen mit Labels"""
@@ -489,7 +489,7 @@ def _add_stats_content(slide, content: SlideContent, palette: dict):
         para.text = stat.get("value", "")
         para.font.size = Pt(60)
         para.font.bold = True
-        para.font.color.rgb = RgbColor(*hex_to_rgb(palette["primary"]))
+        para.font.color.rgb = RGBColor(*hex_to_rgb(palette["primary"]))
         para.alignment = PP_ALIGN.CENTER
         
         # Label
@@ -498,7 +498,7 @@ def _add_stats_content(slide, content: SlideContent, palette: dict):
         para = tf.paragraphs[0]
         para.text = stat.get("label", "")
         para.font.size = Pt(16)
-        para.font.color.rgb = RgbColor(*hex_to_rgb(palette["text_dark"]))
+        para.font.color.rgb = RGBColor(*hex_to_rgb(palette["text_dark"]))
         para.alignment = PP_ALIGN.CENTER
 
 def _add_image_left_content(slide, content: SlideContent, palette: dict):
@@ -516,7 +516,7 @@ def _add_image_left_content(slide, content: SlideContent, palette: dict):
         para = tf.paragraphs[0]
         para.text = content.content
         para.font.size = Pt(16)
-        para.font.color.rgb = RgbColor(*hex_to_rgb(palette["text_dark"]))
+        para.font.color.rgb = RGBColor(*hex_to_rgb(palette["text_dark"]))
 
 def _add_image_right_content(slide, content: SlideContent, palette: dict):
     """Image Right Layout"""
@@ -528,7 +528,7 @@ def _add_image_right_content(slide, content: SlideContent, palette: dict):
         para = tf.paragraphs[0]
         para.text = content.content
         para.font.size = Pt(16)
-        para.font.color.rgb = RgbColor(*hex_to_rgb(palette["text_dark"]))
+        para.font.color.rgb = RGBColor(*hex_to_rgb(palette["text_dark"]))
     
     if content.image_path:
         img_path = ASSETS_DIR / "images" / content.image_path
