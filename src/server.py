@@ -21,7 +21,6 @@ import uvicorn
 # Datei-Erstellungs-Libraries
 from pptx import Presentation
 from pptx.util import Inches, Pt
-from pptx.dml.color import RgbColor
 from docx import Document
 from docx.shared import Pt as DocxPt, Inches as DocxInches
 from openpyxl import Workbook
