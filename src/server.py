@@ -900,9 +900,34 @@ app = FastAPI(
     description="Erstellt professionelle PPTX, DOCX, XLSX und PDF Dateien mit Design-Optionen, Templates und Logo-Support",
     version="2.0.0",
     lifespan=lifespan,
-    servers=get_openapi_servers(),
     root_path=os.getenv("ROOT_PATH", "")
 )
+
+# Custom OpenAPI Schema mit dynamischen Servern
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    
+    from fastapi.openapi.utils import get_openapi
+    openapi_schema = get_openapi(
+        title=app.title,
+        version=app.version,
+        description=app.description,
+        routes=app.routes,
+    )
+    
+    # Server dynamisch hinzufügen
+    servers = get_openapi_servers()
+    if servers:
+        openapi_schema["servers"] = servers
+    else:
+        # Fallback: Aktuellen Host verwenden (relativ)
+        openapi_schema["servers"] = [{"url": "/", "description": "Current Host"}]
+    
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
 
 app.add_middleware(
     CORSMiddleware,
@@ -939,14 +964,18 @@ async def root():
 @app.get("/debug/config")
 async def debug_config():
     """Debug-Endpoint um die aktuelle Konfiguration zu prüfen"""
+    import sys
     return {
-        "BASE_URL": BASE_URL,
+        "BASE_URL_env": os.getenv("BASE_URL", "NOT SET"),
+        "BASE_URL_parsed": BASE_URL,
         "PORT": PORT,
-        "ROOT_PATH": os.getenv("ROOT_PATH", ""),
+        "ROOT_PATH": os.getenv("ROOT_PATH", "NOT SET"),
         "FILES_DIR": str(FILES_DIR),
         "ASSETS_DIR": str(ASSETS_DIR),
         "TEMPLATES_DIR": str(TEMPLATES_DIR),
-        "openapi_servers": get_openapi_servers()
+        "openapi_servers": get_openapi_servers(),
+        "python_version": sys.version,
+        "all_env_keys": [k for k in os.environ.keys() if "URL" in k or "PATH" in k or "PORT" in k]
     }
 
 # --- PowerPoint ---
