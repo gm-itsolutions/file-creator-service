@@ -12,4 +12,4 @@ openpyxl==3.1.2
 reportlab==4.1.0
 
 # Image handling
-Pillow==10.2.0
+Pillow==13.0.0
