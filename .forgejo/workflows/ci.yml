@@ -1,0 +1,14 @@
+# Forgejo CI (Runner gm-hosting). Prüfungen bei jedem Push auf main und jedem Pull Request.
+# Keine Tests im Repo: Image bauen (Python 3.11, gepinnte Abhängigkeiten) und Server darin importieren.
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: https://git.gm-itsolutions.de/gm-actions/actions-checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - run: docker build -t ci-test .
+      - run: docker run --rm ci-test python -c 'import sys; sys.path.insert(0, "src"); import server'
